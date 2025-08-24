@@ -12,7 +12,7 @@ export interface FormData {
   country: string;
 }
 
-interface FormStore {
+export interface FormStore {
   allFormData: FormData[];
   addFormData: (data: FormData) => void;
   resetFormFields: () => void;

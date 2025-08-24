@@ -5,9 +5,16 @@ import { formSchema } from '../form-config/validation-zod';
 import { useFormStore } from '../hooks/useStore';
 import type { DataForm } from '../form-config/types';
 import type { CloseProps } from './OverlayModal';
+import { useEffect } from 'react';
+import { initialCountries } from '../hooks/country-list';
 
 const FormReactHookForm = ({ onClose }: CloseProps) => {
-  const { addFormData } = useFormStore();
+  const { addFormData, countries, setCountries } = useFormStore();
+  useEffect(() => {
+    if (countries.length === 0) {
+      setCountries(initialCountries);
+    }
+  }, [countries.length, setCountries]);
 
   const {
     register,
@@ -30,44 +37,75 @@ const FormReactHookForm = ({ onClose }: CloseProps) => {
         picture: reader.result,
       });
     };
-    reader.readAsDataURL(file);
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {configComponent.map((field) => (
         <div key={field.name}>
-          {field.type !== 'checkbox' && field.type !== 'file' && (
+          {field.type !== 'checkbox' && field.name !== 'country' && (
             <label htmlFor={field.name}>{field.placeholder}</label>
           )}
 
-          {field.type === 'select' ? (
-            <select id={field.name} {...register(field.name)}>
-              <option value="">Select {field.placeholder}</option>
-              {field.options?.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
+          {field.name === 'country' ? (
+            <>
+              <label htmlFor="country-input">{field.placeholder}</label>
+              <input
+                id="country-input"
+                type="text"
+                list="countries-list"
+                {...register('country')}
+                autoComplete="off"
+              />
+              <datalist id="countries-list">
+                {countries.map((country) => (
+                  <option key={country} value={country} />
+                ))}
+              </datalist>
+            </>
+          ) : field.type === 'select' ? (
+            <>
+              <label htmlFor={field.name}>{field.placeholder}</label>
+              <select id={field.name} {...register(field.name)}>
+                <option value="">Select {field.placeholder}</option>
+                {field.options?.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </>
           ) : field.type === 'checkbox' ? (
-            <label>
-              <input type="checkbox" {...register(field.name)} />
+            <label htmlFor={field.name}>
+              <input
+                id={field.name}
+                type="checkbox"
+                {...register(field.name)}
+              />
               {field.placeholder}
             </label>
           ) : field.type === 'file' ? (
-            <input
-              id={field.name}
-              type="file"
-              {...register(field.name)}
-              accept="image/png, image/jpeg"
-            />
+            <>
+              <label htmlFor={field.name}>{field.placeholder}</label>
+              <input
+                id={field.name}
+                type="file"
+                {...register(field.name)}
+                accept="image/png, image/jpeg"
+              />
+            </>
           ) : (
-            <input
-              id={field.name}
-              type={field.type}
-              {...register(field.name)}
-            />
+            <>
+              <label htmlFor={field.name}>{field.placeholder}</label>
+              <input
+                id={field.name}
+                type={field.type}
+                {...register(field.name)}
+              />
+            </>
           )}
 
           {errors[field.name]?.message && (
