@@ -7,6 +7,7 @@ import type { DataForm } from '../form-config/types';
 import type { CloseProps } from './OverlayModal';
 import { useEffect } from 'react';
 import { initialCountries } from '../hooks/country-list';
+import './style.css';
 
 const FormReactHookForm = ({ onClose }: CloseProps) => {
   const { addFormData, countries, setCountries } = useFormStore();
@@ -105,7 +106,9 @@ const FormReactHookForm = ({ onClose }: CloseProps) => {
         </div>
       ))}
 
-      <button type="submit">Submit</button>
+      <button type="submit" className="submit-button">
+        Submit
+      </button>
     </form>
   );
 };

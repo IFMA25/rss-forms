@@ -5,6 +5,7 @@ import type { CloseProps } from './OverlayModal';
 import type { DataForm } from '../form-config/types';
 import { configComponent } from '../form-config/configComponent';
 import { formSchema } from '../form-config/validation-zod';
+import './style.css';
 
 const FormUncontrolled = ({ onClose }: CloseProps) => {
   const { addFormData, countries, setCountries } = useFormStore();
@@ -32,24 +33,22 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
       const element = formElements.namedItem(field.name);
       if (!element) return;
 
-      if (
-        element instanceof HTMLInputElement &&
-        field.type !== 'file' &&
-        field.type !== 'checkbox'
-      ) {
-        dataObj[field.name as keyof DataForm] = element.value;
-      }
-
-      if (element instanceof HTMLInputElement && field.type === 'checkbox') {
-        dataObj[field.name as keyof DataForm] = element.checked;
+      if (element instanceof HTMLInputElement) {
+        if (field.type === 'checkbox') {
+          dataObj[field.name as keyof DataForm] = element.checked;
+        } else if (field.type === 'file') {
+          dataObj.picture = element.files ?? null;
+        } else if (field.type === 'number') {
+          dataObj[field.name as keyof DataForm] = element.value
+            ? Number(element.value)
+            : 0;
+        } else {
+          dataObj[field.name as keyof DataForm] = element.value;
+        }
       }
 
       if (element instanceof HTMLSelectElement) {
         dataObj[field.name as keyof DataForm] = element.value;
-      }
-
-      if (element instanceof HTMLInputElement && field.type === 'file') {
-        dataObj.picture = element.files ?? null;
       }
     });
 
@@ -57,7 +56,7 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((err) => {
-        const fieldName = err.path[0] as string;
+        const fieldName = String(err.path[0]);
         fieldErrors[fieldName] = err.message;
       });
       setErrors(fieldErrors);
@@ -88,11 +87,7 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
   return (
     <form ref={formRef} onSubmit={handleSubmit}>
       {configComponent.map((field) => (
-        <div key={field.name}>
-          {field.name !== 'country' && (
-            <label htmlFor={field.name}>{field.placeholder}</label>
-          )}
-
+        <div key={field.name} className="form-field">
           {field.name === 'country' ? (
             <>
               <label htmlFor="country">Country</label>
@@ -103,6 +98,7 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
                 list="countries-list"
                 value={countryValue}
                 onChange={(e) => setCountryValue(e.target.value)}
+                placeholder="Start typing country..."
               />
               <datalist id="countries-list">
                 {countries.map((c) => (
@@ -110,22 +106,11 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
                 ))}
               </datalist>
             </>
-          ) : field.type === 'select' ? (
-            <select id={field.name} name={field.name} defaultValue="">
-              <option value="" disabled>
-                Select {field.placeholder}
-              </option>
-              {field.options?.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
           ) : field.type === 'checkbox' ? (
-            <>
+            <label htmlFor={field.name}>
               <input id={field.name} name={field.name} type="checkbox" />
-              <label htmlFor={field.name}>{field.placeholder}</label>
-            </>
+              {field.placeholder}
+            </label>
           ) : field.type === 'file' ? (
             <>
               <label htmlFor={field.name}>{field.placeholder}</label>
@@ -136,8 +121,30 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
                 accept="image/png, image/jpeg"
               />
             </>
+          ) : field.type === 'select' ? (
+            <>
+              <label htmlFor={field.name}>{field.placeholder}</label>
+              <select id={field.name} name={field.name} defaultValue="">
+                <option value="" disabled>
+                  Select {field.placeholder}
+                </option>
+                {field.options?.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </>
           ) : (
-            <input id={field.name} name={field.name} type={field.type} />
+            <>
+              <label htmlFor={field.name}>{field.placeholder}</label>
+              <input
+                id={field.name}
+                name={field.name}
+                type={field.type}
+                placeholder={field.placeholder}
+              />
+            </>
           )}
 
           {errors[field.name] && (
@@ -146,7 +153,9 @@ const FormUncontrolled = ({ onClose }: CloseProps) => {
         </div>
       ))}
 
-      <button type="submit">Submit</button>
+      <button type="submit" className="submit-button">
+        Submit
+      </button>
     </form>
   );
 };

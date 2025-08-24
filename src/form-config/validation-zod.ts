@@ -9,8 +9,14 @@ export const formSchema = z
         'The name must start with a capital letter!'
       ),
     age: z.preprocess(
-      (val) => (typeof val === 'string' ? Number(val) : val),
-      z.number().min(0, 'Age must be a positive number')
+      (val) => {
+        if (typeof val === 'string') {
+          const num = Number(val);
+          return isNaN(num) ? undefined : num;
+        }
+        return val;
+      },
+      z.number().refine((val) => val > 0, { message: 'Enter age' })
     ),
     email: z.string().email('Incorrect e-mail'),
     password1: z
