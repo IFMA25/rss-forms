@@ -1,0 +1,82 @@
+.modal {
+  position: absolute;
+  padding: 60px 20px 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  border: 2px solid #1a2c55;
+  background-color: #ccc;
+  z-index: 20;
+}
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  box-shadow: 2px 2px 4px;
+  font-size: 14px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.error-message {
+  color: red;
+}
+
+form div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 5px 20px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+form div label {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+form div input,
+form div select {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 7px 5px;
+}
+
+.submit-button {
+  display: block;
+  margin: 20px auto 0;
+}
+
+.section:first-child {
+  padding-right: 40px;
+  border-right: 1px solid black;
+}
+
+.section:last-child {
+  padding-left: 40px;
+}
+
+.error-message {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  color: red;
+  font-size: 12px;
+  margin: 0;
+  text-align: center;
+}
