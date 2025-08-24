@@ -1,9 +1,12 @@
 import './App.css';
+import Header from './components/Header';
+import Main from './components/Main';
 
 function App() {
   return (
     <>
-      <h1>React forms</h1>
+      <Header />
+      <Main />
     </>
   );
 }
