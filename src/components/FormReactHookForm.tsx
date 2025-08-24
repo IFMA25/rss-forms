@@ -32,10 +32,6 @@ const FormReactHookForm = ({ onClose }: CloseProps) => {
       addFormData({ ...data, picture: reader.result as string });
       reset();
       onClose();
-      console.log('Form data saved to store:', {
-        ...data,
-        picture: reader.result,
-      });
     };
     if (file) {
       reader.readAsDataURL(file);
@@ -59,6 +55,7 @@ const FormReactHookForm = ({ onClose }: CloseProps) => {
                 list="countries-list"
                 {...register('country')}
                 autoComplete="off"
+                placeholder="Start typing country..."
               />
               <datalist id="countries-list">
                 {countries.map((country) => (
@@ -67,17 +64,14 @@ const FormReactHookForm = ({ onClose }: CloseProps) => {
               </datalist>
             </>
           ) : field.type === 'select' ? (
-            <>
-              <label htmlFor={field.name}>{field.placeholder}</label>
-              <select id={field.name} {...register(field.name)}>
-                <option value="">Select {field.placeholder}</option>
-                {field.options?.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </>
+            <select id={field.name} {...register(field.name)}>
+              <option value="">Select {field.placeholder}</option>
+              {field.options?.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
           ) : field.type === 'checkbox' ? (
             <label htmlFor={field.name}>
               <input
@@ -88,24 +82,19 @@ const FormReactHookForm = ({ onClose }: CloseProps) => {
               {field.placeholder}
             </label>
           ) : field.type === 'file' ? (
-            <>
-              <label htmlFor={field.name}>{field.placeholder}</label>
-              <input
-                id={field.name}
-                type="file"
-                {...register(field.name)}
-                accept="image/png, image/jpeg"
-              />
-            </>
+            <input
+              id={field.name}
+              type="file"
+              {...register(field.name)}
+              accept="image/png, image/jpeg"
+            />
           ) : (
-            <>
-              <label htmlFor={field.name}>{field.placeholder}</label>
-              <input
-                id={field.name}
-                type={field.type}
-                {...register(field.name)}
-              />
-            </>
+            <input
+              id={field.name}
+              type={field.type}
+              {...register(field.name)}
+              placeholder={field.placeholder}
+            />
           )}
 
           {errors[field.name]?.message && (
