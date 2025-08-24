@@ -1,27 +1,15 @@
-import { useState } from 'react';
-import Button from './Button';
-import Modal from './Modal';
-import './style.css';
+import { useFormStore } from '../hooks/useStore';
+import CardData from './CardData';
 
 const Main = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
+  const formData = useFormStore((state) => state.allFormData);
   return (
     <main>
-      <div className="container">
-        <div className="section">
-          <h2>Form Section 1</h2>
-          <Button onClick={openModal}>Submit</Button>
-          {isModalOpen && <Modal onClose={closeModal}>Modal Content</Modal>}
-        </div>
-        <div className="section">
-          <h2>Form Section 2</h2>
-          <Button onClick={openModal}>Submit</Button>
-        </div>
-      </div>
-      {isModalOpen && <Modal onClose={closeModal}>Modal Content</Modal>}
+      <h2>Cards with data info</h2>
+      <ul>
+        {formData &&
+          formData.map((data, id) => <CardData key={id} data={data} />)}
+      </ul>
     </main>
   );
 };

@@ -1,10 +1,10 @@
 import './style.css';
 
-interface OverlayModalProps {
+export interface CloseProps {
   onClose: () => void;
 }
 
-const OverlayModal = ({ onClose }: OverlayModalProps) => {
+const OverlayModal = ({ onClose }: CloseProps) => {
   return <div className="overlay" onClick={onClose}></div>;
 };
 
